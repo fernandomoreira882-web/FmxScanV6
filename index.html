@@ -4214,54 +4214,7 @@ function exportarCSV(){
 // ==========================================
 // 📷 MOTOR DE SCANNER QR CODE INDUSTRIAL
 // ==========================================
-let leitorQR = null;
 
-function iniciarScannerQR() {
-    const container = document.getElementById('container-camera');
-    container.style.display = 'block';
-
-    // Inicia a biblioteca que importámos no Passo 1
-    leitorQR = new Html5Qrcode("leitor-qr");
-
-    // Configuração: Câmara traseira (environment) e velocidade de leitura
-    leitorQR.start(
-        { facingMode: "environment" }, 
-        {
-            fps: 10, // 10 leituras por segundo
-            qrbox: { width: 250, height: 250 } // O quadrado de foco no ecrã
-        },
-        (textoDecodificado, resultado) => {
-            // SUCESSO: O robô leu o código!
-            pararScannerQR(); // Desliga a câmara imediatamente
-            
-            // Preenche o campo de busca com a TAG lida e carrega o Prontuário
-            const campoBusca = document.getElementById('busca-prontuario');
-            if(campoBusca) campoBusca.value = textoDecodificado.toUpperCase();
-            
-            renderProntuario(textoDecodificado);
-            
-            // Vibra o telemóvel para o técnico saber que leu (se suportado)
-            if (navigator.vibrate) navigator.vibrate(200); 
-        },
-        (erro) => {
-            // Ignora os erros normais de "procura de foco" em tempo real
-        }
-    ).catch((err) => {
-        alert("⚠️ Erro ao abrir a câmara. Verifique se deu permissão ao navegador no seu telemóvel.");
-        container.style.display = 'none';
-    });
-}
-
-function pararScannerQR() {
-    if (leitorQR) {
-        leitorQR.stop().then(() => {
-            document.getElementById('container-camera').style.display = 'none';
-            leitorQR.clear();
-        }).catch(err => console.log("Erro ao fechar a câmara", err));
-    } else {
-        document.getElementById('container-camera').style.display = 'none';
-    }
-}
 
 function atualizarSeletoresTecnicos() {
     const selectTecnico = document.getElementById('f-tecnico');
@@ -4301,6 +4254,33 @@ function atualizarSeletoresTecnicos() {
                 selectTecnico.innerHTML = opcoesGerais;
             }
         }
+            // 1. Função que o seu botão de HTML chama para avisar o Kodular
+function iniciarScannerQR() {
+    // Este comando envia a mensagem para o Kodular abrir o leitor nativo
+    window.AppInventor.setWebViewString("abrir_scanner");
+}
+
+// 2. Mantemos esta função caso tenha algum botão "Fechar/Cancelar" no HTML
+function pararScannerQR() {
+    const container = document.getElementById('container-camera');
+    if (container) container.style.display = 'none';
+}
+
+// 3. NOVA FUNÇÃO: O Kodular vai injetar o resultado aqui dentro!
+function processarLeituraKodular(textoDecodificado) {
+    // Preenche o campo de busca com a TAG lida
+    const campoBusca = document.getElementById('busca-prontuario');
+    if (campoBusca) {
+        campoBusca.value = textoDecodificado.toUpperCase();
+    }
+    
+    // Carrega o histórico de manutenção da máquina
+    renderProntuario(textoDecodificado);
+    
+    // Vibra o celular para o técnico saber que leu
+    if (navigator.vibrate) navigator.vibrate(200); 
+}
+            
     }
 }
 
