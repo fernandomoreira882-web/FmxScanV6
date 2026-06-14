@@ -4255,9 +4255,15 @@ function atualizarSeletoresTecnicos() {
             }
         }
             // 1. Função que o seu botão de HTML chama para avisar o Kodular
+// 1. Função corrigida com o temporizador para resolver o bug do clique
 function iniciarScannerQR() {
-    // Este comando envia a mensagem para o Kodular abrir o leitor nativo
-    window.AppInventor.setWebViewString("abrir_scanner");
+    // Limpa a mensagem antiga para o Kodular perceber o novo clique
+    window.AppInventor.setWebViewString(""); 
+    
+    // Dá uma micro pausa e envia o comando real
+    setTimeout(function() {
+        window.AppInventor.setWebViewString("abrir_scanner");
+    }, 100);
 }
 
 // 2. Mantemos esta função caso tenha algum botão "Fechar/Cancelar" no HTML
@@ -4266,7 +4272,7 @@ function pararScannerQR() {
     if (container) container.style.display = 'none';
 }
 
-// 3. NOVA FUNÇÃO: O Kodular vai injetar o resultado aqui dentro!
+// 3. NOVA FUNÇÃO COMPLETA: O Kodular vai injetar o resultado aqui dentro!
 function processarLeituraKodular(textoDecodificado) {
     // Preenche o campo de busca com a TAG lida
     const campoBusca = document.getElementById('busca-prontuario');
@@ -4277,13 +4283,10 @@ function processarLeituraKodular(textoDecodificado) {
     // Carrega o histórico de manutenção da máquina
     renderProntuario(textoDecodificado);
     
-    // Vibra o celular para o técnico saber que leu
+    // Vibra o telemóvel para o técnico saber que leu
     if (navigator.vibrate) navigator.vibrate(200); 
 }
             
-    }
-}
-
 
 function renderBacklog() {
     const div = document.getElementById('lista-backlog');
