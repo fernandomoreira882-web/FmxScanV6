@@ -145,7 +145,6 @@
         ">
     </div>
 
-</div>
 
         <input type="hidden" id="edit-os-id">
         <input type="hidden" id="edit-os-setor">
@@ -845,6 +844,9 @@ window.authFMX = auth;
 // ==========================================
 // 🧠 ESTRUTURA DE BANCOS INTELIGENTES
 // ==========================================
+        localStorage.removeItem('fmx_ocorrencias');
+localStorage.removeItem('fmx_reports');
+        
 let ocorrencias = JSON.parse(localStorage.getItem('fmx_ocorrencias')) || [];
 let intervencoes = JSON.parse(localStorage.getItem('fmx_intervencoes')) || [];
 let timeline = JSON.parse(localStorage.getItem('fmx_timeline')) || [];
@@ -1394,10 +1396,9 @@ function dispararOSWhatsApp() {
     const msg =
     `🚨 *NOVA O.S. APG TAUBATÉ* 🚨%0A%0A*TAG:* ${tag}%0A*Tipo:* ${tipoFalha}%0A*Status:* ${impacto}%0A*Sintoma:* ${sintoma}%0A%0A🛠️ *Por favor, atue o mais rápido possível e registre no FMX Scanner.*`;
 
-    window.open(
-        `https://wa.me/${telefone}?text=${msg}`,
-        '_blank'
-    );
+        // Abre o WhatsApp com o código do Brasil (55)
+    window.location.href = `https://wa.me/55${telefone}?text=${msg}`;
+        
 
     document.getElementById('f-falha').value = "";
     document.getElementById('f-tag').value = "";
@@ -1472,6 +1473,7 @@ function salvarDocumentoTAG() {
     alert(`✅ Sucesso! Documento [${tipo}] vinculado a ${tagsArray.length} TAG(s).`);
 }
 
+
 function salvarNovaTag() {
     const inputTag = document.getElementById('cad-tag-nome') || document.getElementById('cad-tag');
     const inputTipo = document.getElementById('cad-tag-tipo') || document.getElementById('f-tipo-ativo');
@@ -1534,8 +1536,11 @@ function salvarNovaTag() {
     if (typeof atualizarSelectTendencia === 'function') try { atualizarSelectTendencia(); } catch(e){}
     if (typeof carregarAtivos === 'function') try { carregarAtivos(); } catch(e){}
     if (typeof renderAtivos === 'function') try { renderAtivos(); } catch(e){}
-}
 
+    // A CORREÇÃO ESTÁ AQUI: Força a página a recarregar e atualizar as listas visuais na hora
+    window.location.reload();
+        }
+        
 
 // ==========================================================
 // 🚀 NOVAS FUNÇÕES DO CATÁLOGO DE FALHAS E DIÁRIO DE BORDO
