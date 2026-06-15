@@ -174,9 +174,6 @@
 <div class="container">
     <section id="tela1" class="screen active">
     <div id="status-planta"></div>
-    <div id="ranking-falhas"></div>
-    <div id="alerta-maquinas-criticas"></div>
-    <div id="alerta-reincidencia"></div>
     <div class="card">
         <h3>📝 Novo Registro</h3>
 
@@ -1295,9 +1292,7 @@ if(selectParadas){
 
 function dispararOSWhatsApp() {
 
-    const selectWhats =
-    document.getElementById('select-tecnico-os');
-
+    const selectWhats = document.getElementById('select-tecnico-os');
     const telefone = selectWhats.value;
 
     if (!telefone) {
@@ -1305,83 +1300,35 @@ function dispararOSWhatsApp() {
         return;
     }
 
-    const nomeTecnicoDestino =
-    selectWhats.options[
-        selectWhats.selectedIndex
-    ].text.split(' (')[0];
-
-    const tag =
-    document.getElementById('f-tag').value ||
-    "NÃO INFORMADA";
-
-    const sintoma =
-    document.getElementById('f-falha').value ||
-    "Sem detalhes adicionais";
-
-    const parada =
-    document.getElementById('f-parada').value;
-
-    const impacto =
-    parada === "SIM"
-    ? "🔴 Máquina Parada"
-    : "🟢 Máquina Operando";
-
-    const tipoFalha =
-    document.getElementById('f-tipo').value ||
-    "Não classificado";
-
-    const setor =
-    document.getElementById('f-setor').value ||
-    "Não informado";
+    const nomeTecnicoDestino = selectWhats.options[selectWhats.selectedIndex].text.split(' (')[0];
+    const tag = document.getElementById('f-tag').value || "NÃO INFORMADA";
+    const sintoma = document.getElementById('f-falha').value || "Sem detalhes adicionais";
+    const parada = document.getElementById('f-parada').value;
+    const impacto = parada === "SIM" ? "🔴 Máquina Parada" : "🟢 Máquina Operando";
+    const tipoFalha = document.getElementById('f-tipo').value || "Não classificado";
+    const setor = document.getElementById('f-setor').value || "Não informado";
 
     const novaOSBacklog = {
-
         id: Date.now(),
         os: "PENDENTE",
-
-        data:
-        new Date().toISOString().split('T')[0],
-
-        time:
-        document.getElementById('f-time').value,
-
-        tecnico:
-        nomeTecnicoDestino,
-
-        tag:
-        tag,
-
-        setor:
-        setor,
-
-        tipo_registro:
-        "backlog",
-
-        tipo:
-        tipoFalha,
-
-        falha:
-        sintoma,
-
-        parada:
-        parada,
-
-        statusParada:
-        "BACKLOG",
-
-        criador:
-        authFMX?.currentUser?.email ||
-        "desconhecido"
+        data: new Date().toISOString().split('T')[0],
+        time: document.getElementById('f-time').value,
+        tecnico: nomeTecnicoDestino,
+        tag: tag,
+        setor: setor,
+        tipo_registro: "backlog",
+        tipo: tipoFalha,
+        falha: sintoma,
+        parada: parada,
+        statusParada: "BACKLOG",
+        criador: authFMX?.currentUser?.email || "desconhecido"
     };
 
     ocorrencias.push(novaOSBacklog);
     db = ocorrencias; // Reforça o alias
     salvarLocal();
 
-    console.log(
-        "OS criada no backlog:",
-        novaOSBacklog
-    );
+    console.log("OS criada no backlog:", novaOSBacklog);
 
     if(typeof renderBacklog === 'function'){
         renderBacklog();
@@ -1391,18 +1338,28 @@ function dispararOSWhatsApp() {
         renderReport();
     }
 
-    const msg =
-    `🚨 *NOVA O.S. APG TAUBATÉ* 🚨%0A%0A*TAG:* ${tag}%0A*Tipo:* ${tipoFalha}%0A*Status:* ${impacto}%0A*Sintoma:* ${sintoma}%0A%0A🛠️ *Por favor, atue o mais rápido possível e registre no FMX Scanner.*`;
+    const msg = `🚨 *NOVA O.S. APG TAUBATÉ* 🚨%0A%0A*TAG:* ${tag}%0A*Tipo:* ${tipoFalha}%0A*Status:* ${impacto}%0A*Sintoma:* ${sintoma}%0A%0A🛠️ *Por favor, atue o mais rápido possível e registre no FMX Scanner.*`;
 
-       // Abre o WhatsApp com o código do Brasil (55)
-    window.location.href = `https://wa.me/55${telefone}?text=${msg}`;
+    const linkZap = `https://wa.me/55${telefone}?text=${msg}`;
 
+    // LÓGICA INTELIGENTE: Deteta onde o aplicativo está sendo rodado
+    if (window.AppInventor) {
+        // Se estiver dentro do Kodular (APK), envia a mensagem para a ponte
+        window.AppInventor.setWebViewString(""); 
+        setTimeout(function() {
+            window.AppInventor.setWebViewString("zap|" + linkZap);
+        }, 100);
+    } else {
+        // Se estiver no editor Spck ou no navegador do PC, abre o link normalmente
+        window.open(linkZap, '_blank');
+    }
 
     document.getElementById('f-falha').value = "";
     document.getElementById('f-tag').value = "";
 
     changeScreen('tela-backlog');
-}
+        }
+        
 
 
 
