@@ -1702,6 +1702,10 @@ const historico = db.filter(i => {
 
     return tagBanco === tagBusca;
 });
+        alert(
+    "TAG QR: " + tagBusca +
+    "\nEncontrados: " + historico.length
+);
 // PLANOS DA TAG
 const planosTag = planos.filter(p =>
     normalizarTAG(p.tag) === tagBusca
