@@ -1702,10 +1702,7 @@ const historico = db.filter(i => {
 
     return tagBanco === tagBusca;
 });
-        alert(
-    "TAG QR: " + tagBusca +
-    "\nEncontrados: " + historico.length
-);
+        
 // PLANOS DA TAG
 const planosTag = planos.filter(p =>
     normalizarTAG(p.tag) === tagBusca
@@ -1717,10 +1714,12 @@ const docsTag = (documentosTags || [])
     normalizarTAG(d.tag)
     === tagBusca
 );
-   alert(
-    "planosTag=" + planosTag.length +
-    "\ndocsTag=" + docsTag.length
-);     
+  const pecasTag = (catalogoPecas || [])
+.filter(p =>
+    normalizarTAG(p.tagVinculada)
+    === tagBusca
+);      
+   
 
 
 
