@@ -4186,17 +4186,17 @@ function pararScannerQR() {
 
 // 3. NOVA FUNÇÃO COMPLETA: O Kodular vai injetar o resultado aqui dentro!
 function processarLeituraKodular(textoDecodificado) {
-    // Preenche o campo de busca com a TAG lida
+
+    alert("QR recebido: " + textoDecodificado);
+
     const campoBusca = document.getElementById('busca-prontuario');
     if (campoBusca) {
         campoBusca.value = textoDecodificado.toUpperCase();
     }
-    
-    // Carrega o histórico de manutenção da máquina
+
     renderProntuario(textoDecodificado);
-    
-    // Vibra o telemóvel para o técnico saber que leu
-    if (navigator.vibrate) navigator.vibrate(200); 
+
+    if (navigator.vibrate) navigator.vibrate(200);
 }
 
 
